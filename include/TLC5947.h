@@ -23,7 +23,8 @@
 #define TLC5947_MAX_GS_VAL    		   4095
 #define TLC5947_DC_TO_GS(x)       	   (x*TLC5947_MAX_GS_VAL)/100
 
-typedef struct{
+typedef struct
+{
 
     uint8_t *gs_buffer;
 
@@ -39,14 +40,16 @@ typedef struct{
 
     SPI_HandleTypeDef *hspi;
 
-}TLC5947_DATA;
+}TLC5947_Handle_t;
 
-typedef enum {
+typedef enum
+{
     TLC5947_OK 						 = 0,
     TLC5947_ERROR_GENERIC 			 = 1,
     TLC5947_ERROR_MEMORY       		 = 2,
     TLC5947_ERROR_INVALID_ARG   	 = 3,
     TLC5947_ERROR_SPI 				 = 4
+
 }TLC5947_STATUS;
 
 typedef enum
@@ -62,22 +65,23 @@ typedef enum
     DC_80                            = (uint16_t)TLC5947_DC_TO_GS(80),
     DC_90                            = (uint16_t)TLC5947_DC_TO_GS(90),
     DC_100                           = (uint16_t)TLC5947_DC_TO_GS(100)
+
 }TLC5947_DC_TO_GS_VALUE;
 
-TLC5947_STATUS TLC5947_data_init(uint16_t num_devices, GPIO_TypeDef *XLAT_Port, uint16_t XLAT_Pin, GPIO_TypeDef *BLANK_Port, uint16_t BLANK_Pin, SPI_HandleTypeDef *hspi, TLC5947_DATA *TLC5947_data);
+TLC5947_STATUS TLC5947_handle_init(TLC5947_Handle_t *handle, uint16_t num_devices, GPIO_TypeDef *XLAT_Port, uint16_t XLAT_Pin, GPIO_TypeDef *BLANK_Port, uint16_t BLANK_Pin, SPI_HandleTypeDef *hspi);
 
-TLC5947_STATUS TLC5947_create_GS_buffer(TLC5947_DATA *TLC5947_data);
+TLC5947_STATUS TLC5947_create_GS_buffer(TLC5947_Handle_t *handle);
 
-void TLC5947_remove_GS_buffer(TLC5947_DATA *TLC5947_data);
+void TLC5947_remove_GS_buffer(TLC5947_Handle_t *handle);
 
-TLC5947_STATUS TLC5947_update_GS_buffer(uint16_t chan, uint16_t gs_val, TLC5947_DATA *TLC5947_data);
+TLC5947_STATUS TLC5947_update_GS_buffer(TLC5947_Handle_t *handle, uint16_t chan, uint16_t gs_val);
 
-uint16_t TLC5947_get_GS_value(uint16_t chan, TLC5947_DATA *TLC5947_data);
+uint16_t TLC5947_get_GS_value(TLC5947_Handle_t *handle, uint16_t chan);
 
-TLC5947_STATUS TLC5947_send_GS_data(TLC5947_DATA *TLC5947_data);
+TLC5947_STATUS TLC5947_send_GS_data(TLC5947_Handle_t *handle);
 
-void TLC5947_enable_outputs(TLC5947_DATA *TLC5947_data);
+void TLC5947_enable_outputs(TLC5947_Handle_t *handle);
 
-void TLC5947_disable_outputs(TLC5947_DATA *TLC5947_data);
+void TLC5947_disable_outputs(TLC5947_Handle_t *handle);
 
 #endif /* __TLC5947_H_ */
