@@ -13,7 +13,7 @@
 
 //Bit Manipulation Macros
 #define SHIFT_4    			    	   4
-#define SHIFT_8     				   4
+#define SHIFT_8     				   8
 #define LOW_HALF_BYTE_MASK  		   0x000F
 #define HIGH_HALF_BYTE_MASK 		   0x00F0
 #define FIRST_BYTE_MASK 			   0x00FF
@@ -62,7 +62,7 @@ typedef enum
     DC_80                            = (uint16_t)TLC5947_DC_TO_GS(80),
     DC_90                            = (uint16_t)TLC5947_DC_TO_GS(90),
     DC_100                           = (uint16_t)TLC5947_DC_TO_GS(100)
-}TLC5947_GS_VALUE;
+}TLC5947_DC_TO_GS_VALUE;
 
 TLC5947_STATUS TLC5947_data_init(uint16_t num_devices, GPIO_TypeDef *XLAT_Port, uint16_t XLAT_Pin, GPIO_TypeDef *BLANK_Port, uint16_t BLANK_Pin, SPI_HandleTypeDef *hspi, TLC5947_DATA *TLC5947_data);
 

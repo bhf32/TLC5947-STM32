@@ -10,14 +10,15 @@
 /**
  * Initialize the TLC5947_DATA struct and its variables
  *
- * @param num_devices - Number of TLC5947 devices part of chain
+ * @param num_devices - Number of TLC5947 devices on chain
  * @param XLAT_Port - XLAT pin GPIO port
  * @param XLAT_Pin - XLAT GPIO pin number
  * @param BLANK_Port - BLANK pin GPIO port
  * @param BLANK_Pin - BLANK GPIO pin number
  * @param hspi - STM32x SPI peripheral handle
- * @param TLC5947_data - Initialized driver data
- * @return TLC5947_OK in case of success, TLC5947_ERROR_MEMORY otherwise.
+ * @param TLC5947_data - TLC5947 driver data
+ *
+ * @return TLC5947_OK in case of success, TLC5947_ERROR_MEMORY otherwise
  */
 TLC5947_STATUS TLC5947_data_init(uint16_t num_devices, GPIO_TypeDef *XLAT_Port, uint16_t XLAT_Pin, GPIO_TypeDef *BLANK_Port, uint16_t BLANK_Pin, SPI_HandleTypeDef *hspi, TLC5947_DATA *TLC5947_data){
     //Set the number of drivers for the TLC5947_DATA instance
@@ -41,8 +42,13 @@ TLC5947_STATUS TLC5947_data_init(uint16_t num_devices, GPIO_TypeDef *XLAT_Port, 
     return TLC5947_OK;
 }
 
-/* Function to allocate the space used to hold the pwm information in the
-   pwm_buffer */
+/**
+ * Allocate the space needed for the TLC5947 driver gs_buffer
+ *
+ * @param TLC5947_data - TLC5947 driver data
+ *
+ * @return TLC5947_OK in case of success, TLC5947_ERROR_MEMORY otherwise
+ */
 TLC5947_STATUS TLC5947_create_GS_buffer(TLC5947_DATA *TLC5947_data){
 
 	const uint32_t gs_buffer_size = (3 * TLC5947_NUM_CHANNELS * TLC5947_data->num_devices) / 2;
@@ -50,23 +56,33 @@ TLC5947_STATUS TLC5947_create_GS_buffer(TLC5947_DATA *TLC5947_data){
 	if(!TLC5947_data->gs_buffer){
 		return TLC5947_ERROR_MEMORY;
 	}
-	memset(TLC5947_data->gs_buffer, 0, gs_buffer_size);
+	memset(TLC5947_data->gs_buffer, DC_0, gs_buffer_size);
 
 	return TLC5947_OK;
 }
 
-/* Function to free/deallocate the space used contain the pwm information in the
-   pwm_buffer */
+/**
+ * Free the space needed for the TLC5947 driver gs_buffer
+ *
+ * @param TLC5947_data - TLC5947 driver data
+ *
+ * @return NONE
+ */
 void TLC5947_remove_GS_buffer(TLC5947_DATA *TLC5947_data){
     //Deallocate space in memory for the TLC5947_DATA instance pwm buffer
     free(TLC5947_data->gs_buffer);
     TLC5947_data->gs_buffer = NULL;
 }
 
-/* Function to set the PWM DC value (0 - 4095) for a specific channel (chan). PWM
-   value of 0 will set a duty cycle (DC) of 0% and 4095 a duty cycle of 99.98%.
-   Channel number on each board can be from 0 to 23, so channel 2 for second
-   board will be 25 for example.*/
+/**
+ * Set the grayscale value (0 - 4095) for a specific channel
+ *
+ * @param chan - TLC5947 channel to be updated
+ * @param gs_val - grayscale value to be assigned
+ * @param TLC5947_data - TLC5947 driver data
+ *
+ * @return TLC5947_OK in case of success, TLC5947_ERROR_INVALID_ARG otherwise
+ */
 TLC5947_STATUS TLC5947_update_GS_buffer(uint16_t chan, uint16_t gs_val, TLC5947_DATA *TLC5947_data){
     //Limit the pwm value to the max allowed grayscale value
     if(gs_val > TLC5947_MAX_GS_VAL){
@@ -91,7 +107,15 @@ TLC5947_STATUS TLC5947_update_GS_buffer(uint16_t chan, uint16_t gs_val, TLC5947_
     return TLC5947_OK;
 }
 
-/* Function to return the PWM value for a specific channel. */
+/**
+ * Get the grayscale value (0 - 4095) for a specific channel
+ *
+ * @param chan - TLC5947 channel to be updated
+ * @param gs_val - grayscale value to be assigned
+ * @param TLC5947_data - TLC5947 driver data
+ *
+ * @return the current grayscale value for the correct channel
+ */
 uint16_t TLC5947_get_GS_value(uint16_t chan, TLC5947_DATA *TLC5947_data){
     //Limit the channel to the max number of channels possible
     if(chan >= (TLC5947_NUM_CHANNELS * TLC5947_data->num_devices)){
@@ -107,10 +131,13 @@ uint16_t TLC5947_get_GS_value(uint16_t chan, TLC5947_DATA *TLC5947_data){
 	}
 }
 
-/* Function to write the grayscale values for PWM to the SIN pin on the TLC5947
- * drivers. This follows the serial communication protocol specified by the
- * part's datasheet. PWM values are sent from the last channel to the first (e.g.
- * channel 22 for second driver to channel 0 for first driver) and MSB to LSB. */
+/**
+ * Write the current grayscale values to the connected TLC5947 devices through SPI
+ *
+ * @param TLC5947_data - TLC5947 driver data
+ *
+ * @return TLC5947_OK in case of success, TLC5947_ERROR_SPI otherwise
+ */
 TLC5947_STATUS TLC5947_send_GS_data(TLC5947_DATA *TLC5947_data){
 	HAL_GPIO_WritePin(TLC5947_data->XLAT_Port, TLC5947_data->XLAT_Pin, GPIO_PIN_RESET);
 
@@ -128,15 +155,25 @@ TLC5947_STATUS TLC5947_send_GS_data(TLC5947_DATA *TLC5947_data){
 	return TLC5947_OK;
 }
 
-/* Function to turn on the constant current outputs for all of the drivers'
- * channels*/
+/**
+ * Enable the TLC5947 output pins
+ *
+ * @param TLC5947_data - TLC5947 driver data
+ *
+ * @return NONE
+ */
 void TLC5947_enable_outputs(TLC5947_DATA *TLC5947_data){
 	//Set TLC5947 BLANK pins to low
 	HAL_GPIO_WritePin(TLC5947_data->BLANK_Port, TLC5947_data->BLANK_Pin, GPIO_PIN_RESET);
 }
 
-/* Function to turn off the constant current outputs for all of the drivers'
- * channels*/
+/**
+ * Disable the TLC5947 output pins
+ *
+ * @param TLC5947_data - TLC5947 driver data
+ *
+ * @return NONE
+ */
 void TLC5947_disable_outputs(TLC5947_DATA *TLC5947_data){
 	//Set TLC5947 BLANK pins to high
 	HAL_GPIO_WritePin(TLC5947_data->BLANK_Port, TLC5947_data->BLANK_Pin, GPIO_PIN_SET);
