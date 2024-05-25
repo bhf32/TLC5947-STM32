@@ -23,7 +23,8 @@
 #define TLC5947_NUM_CHANNELS       	   24
 #define TLC5947_MIN_GS_VAL    		   0
 #define TLC5947_MAX_GS_VAL    		   4095
-#define TLC5947_DC_TO_GS(x)       	   (x*TLC5947_MAX_GS_VAL)/100
+//#define TLC5947_DC_TO_GS(x)       	   ((x)*TLC5947_MAX_GS_VAL)/100
+#define TLC5947_DC_TO_GS(x)       	   (((long long)(x) * TLC5947_MAX_GS_VAL) / 100)
 
 /**
  * @brief TLC5947 Driver Handle struct

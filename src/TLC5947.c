@@ -97,10 +97,10 @@ TLC5947_STATUS TLC5947_update_GS_buffer(TLC5947_Handle_t *handle, uint16_t chan,
     uint16_t adjusted_chan = (3 * chan) / 2;
     if (chan % 2 == 0){
     	handle->gs_buffer[adjusted_chan] = gs_val & FIRST_BYTE_MASK;
-    	handle->gs_buffer[adjusted_chan + 1] = (handle->gs_buffer[chan + 1] & HIGH_HALF_BYTE_MASK) | ((gs_val >> SHIFT_8) & LOW_HALF_BYTE_MASK);
+    	handle->gs_buffer[adjusted_chan + 1] = (handle->gs_buffer[adjusted_chan + 1] & HIGH_HALF_BYTE_MASK) | ((gs_val >> SHIFT_8) & LOW_HALF_BYTE_MASK);
     }
     else{
-    	handle->gs_buffer[adjusted_chan] = (handle->gs_buffer[chan] & LOW_HALF_BYTE_MASK) | ((gs_val << SHIFT_4) & HIGH_HALF_BYTE_MASK);
+    	handle->gs_buffer[adjusted_chan] = (handle->gs_buffer[adjusted_chan] & LOW_HALF_BYTE_MASK) | ((gs_val << SHIFT_4) & HIGH_HALF_BYTE_MASK);
     	handle->gs_buffer[adjusted_chan + 1] = (gs_val >> SHIFT_4) & FIRST_BYTE_MASK;
     }
 
