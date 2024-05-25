@@ -9,20 +9,25 @@
 #define __TLC5947_H_
 
 #include <stdlib.h>
-#include "main.h"
+#include <string.h>
+#include "stm32l5xx_hal.h"
 
-//Bit Manipulation Macros
+/** Bit Manipulation Macros */
 #define SHIFT_4    			    	   4
 #define SHIFT_8     				   8
 #define LOW_HALF_BYTE_MASK  		   0x000F
 #define HIGH_HALF_BYTE_MASK 		   0x00F0
 #define FIRST_BYTE_MASK 			   0x00FF
 
+/** Limits and Commonly used conversion Macro*/
 #define TLC5947_NUM_CHANNELS       	   24
 #define TLC5947_MIN_GS_VAL    		   0
 #define TLC5947_MAX_GS_VAL    		   4095
 #define TLC5947_DC_TO_GS(x)       	   (x*TLC5947_MAX_GS_VAL)/100
 
+/**
+ * @brief TLC5947 Driver Handle struct
+ */
 typedef struct
 {
 
@@ -42,6 +47,9 @@ typedef struct
 
 }TLC5947_Handle_t;
 
+/**
+ * @brief Error mapping for driver functions
+ */
 typedef enum
 {
     TLC5947_OK 						 = 0,
@@ -52,6 +60,9 @@ typedef enum
 
 }TLC5947_STATUS;
 
+/**
+ * @brief Standard Duty Cycles converted to TLC5947 grayscale values
+ */
 typedef enum
 {
     DC_0                             = (uint16_t)TLC5947_DC_TO_GS(0),
@@ -68,7 +79,7 @@ typedef enum
 
 }TLC5947_DC_TO_GS_VALUE;
 
-TLC5947_STATUS TLC5947_handle_init(TLC5947_Handle_t *handle, uint16_t num_devices, GPIO_TypeDef *XLAT_Port, uint16_t XLAT_Pin, GPIO_TypeDef *BLANK_Port, uint16_t BLANK_Pin, SPI_HandleTypeDef *hspi);
+TLC5947_STATUS TLC5947_init(TLC5947_Handle_t *handle, uint16_t num_devices, GPIO_TypeDef *xlat_port, uint16_t xlat_pin, GPIO_TypeDef *blank_port, uint16_t blank_pin, SPI_HandleTypeDef *hspi);
 
 TLC5947_STATUS TLC5947_create_GS_buffer(TLC5947_Handle_t *handle);
 

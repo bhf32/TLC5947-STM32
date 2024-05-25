@@ -12,25 +12,25 @@
  *
  * @param handle - handle for TLC5947 driver
  * @param num_devices - Number of TLC5947 devices on chain
- * @param XLAT_Port - XLAT pin GPIO port
- * @param XLAT_Pin - XLAT GPIO pin number
- * @param BLANK_Port - BLANK pin GPIO port
- * @param BLANK_Pin - BLANK GPIO pin number
+ * @param xlat_port - XLAT pin GPIO port
+ * @param xlat_pin - XLAT GPIO pin number
+ * @param blank_port - BLANK pin GPIO port
+ * @param blank_pin - BLANK GPIO pin number
  * @param hspi - STM32x SPI peripheral handle
  *
  * @return TLC5947_OK in case of success, TLC5947_ERROR_MEMORY otherwise
  */
-TLC5947_STATUS TLC5947_handle_init(TLC5947_Handle_t *handle, uint16_t num_devices, GPIO_TypeDef *XLAT_Port, uint16_t XLAT_Pin, GPIO_TypeDef *BLANK_Port, uint16_t BLANK_Pin, SPI_HandleTypeDef *hspi){
+TLC5947_STATUS TLC5947_init(TLC5947_Handle_t *handle, uint16_t num_devices, GPIO_TypeDef *xlat_port, uint16_t xlat_pin, GPIO_TypeDef *blank_port, uint16_t blank_pin, SPI_HandleTypeDef *hspi){
     //Set the number of devices for the TLC5947_Handle_t instance
 	handle->num_devices = num_devices;
 
     //Assign the port and pins for XLAT pin
-	handle->XLAT_Port = XLAT_Port;
-	handle->XLAT_Pin = XLAT_Pin;
+	handle->XLAT_Port = xlat_port;
+	handle->XLAT_Pin = xlat_pin;
 
     //Assign the port and pins for BLANK pin
-	handle->BLANK_Port = BLANK_Port;
-	handle->BLANK_Pin = BLANK_Pin;
+	handle->BLANK_Port = blank_port;
+	handle->BLANK_Pin = blank_pin;
 
 	handle->hspi = hspi;
 
@@ -78,7 +78,7 @@ void TLC5947_remove_GS_buffer(TLC5947_Handle_t *handle){
  * Set the grayscale value (0 - 4095) for a specific channel
  *
  * @param handle - handle for TLC5947 driver
- * @param chan - TLC5947 channel to be updated
+ * @param chan - channel number in the chain of TLC5947 devices (0 < chan < 24 * (# of devices) - 1)
  * @param gs_val - grayscale value to be assigned
  *
  * @return TLC5947_OK in case of success, TLC5947_ERROR_INVALID_ARG otherwise
@@ -111,10 +111,10 @@ TLC5947_STATUS TLC5947_update_GS_buffer(TLC5947_Handle_t *handle, uint16_t chan,
  * Get the grayscale value (0 - 4095) for a specific channel
  *
  * @param handle - handle for TLC5947 driver
- * @param chan - TLC5947 channel to be updated
+ * @param chan - channel number in the chain of TLC5947 devices (0 < chan < 24 * (# of devices) - 1)
  * @param gs_val - grayscale value to be assigned
  *
- * @return the current grayscale value for the correct channel
+ * @return the current grayscale value for the correct channel, return UINT16_MAX if invalid channel
  */
 uint16_t TLC5947_get_GS_value(TLC5947_Handle_t *handle, uint16_t chan){
     //Limit the channel to the max number of channels possible
