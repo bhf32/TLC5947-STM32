@@ -142,8 +142,8 @@ TLC5947_STATUS TLC5947_send_GS_data(TLC5947_Handle_t *handle){
 	HAL_GPIO_WritePin(handle->XLAT_Port, handle->XLAT_Pin, GPIO_PIN_RESET);
 
 	HAL_StatusTypeDef spi_status;
-	for(int ind = (3 * TLC5947_NUM_CHANNELS*handle->num_devices) / 2 - 1; ind >= 0; ind--){
-		spi_status = HAL_SPI_Transmit(handle->hspi, &(handle->gs_buffer[ind]), 1, HAL_MAX_DELAY);
+	for(int ind = (3 * TLC5947_NUM_CHANNELS*handle->num_devices)/2 - 1; ind >= 0; ind--){
+		spi_status = HAL_SPI_Transmit(handle->hspi, &(handle->gs_buffer[ind]), 1, TLC5947_SPI_TIMEOUT);
 		if(spi_status != HAL_OK) {
 			return TLC5947_ERROR_SPI;
 		}

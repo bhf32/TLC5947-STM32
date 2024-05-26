@@ -23,8 +23,8 @@
 #define TLC5947_NUM_CHANNELS       	   24
 #define TLC5947_MIN_GS_VAL    		   0
 #define TLC5947_MAX_GS_VAL    		   4095
-//#define TLC5947_DC_TO_GS(x)       	   ((x)*TLC5947_MAX_GS_VAL)/100
 #define TLC5947_DC_TO_GS(x)       	   (((long long)(x) * TLC5947_MAX_GS_VAL) / 100)
+#define TLC5947_SPI_TIMEOUT			   10 	//10 msec timeout
 
 /**
  * @brief TLC5947 Driver Handle struct
@@ -54,10 +54,9 @@ typedef struct
 typedef enum
 {
     TLC5947_OK 						 = 0,
-    TLC5947_ERROR_GENERIC 			 = 1,
-    TLC5947_ERROR_MEMORY       		 = 2,
-    TLC5947_ERROR_INVALID_ARG   	 = 3,
-    TLC5947_ERROR_SPI 				 = 4
+    TLC5947_ERROR_MEMORY       		 = 1,
+    TLC5947_ERROR_INVALID_ARG   	 = 2,
+    TLC5947_ERROR_SPI 				 = 3
 
 }TLC5947_STATUS;
 
