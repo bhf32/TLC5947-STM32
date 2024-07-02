@@ -79,20 +79,88 @@ typedef enum
 
 }TLC5947_DC_TO_GS_VALUE;
 
-TLC5947_STATUS TLC5947_init(TLC5947_Handle_t *handle, uint16_t num_devices, GPIO_TypeDef *xlat_port, uint16_t xlat_pin, GPIO_TypeDef *blank_port, uint16_t blank_pin, SPI_HandleTypeDef *hspi);
+/**
+ * @brief Initializes the TLC5947 driver handle and its variables
+ *
+ * @param handle - handle for TLC5947 driver
+ * @param num_devices - Number of TLC5947 devices on chain
+ * @param xlat_port - XLAT pin GPIO port
+ * @param xlat_pin - XLAT GPIO pin number
+ * @param blank_port - BLANK pin GPIO port
+ * @param blank_pin - BLANK GPIO pin number
+ * @param hspi - STM32x SPI peripheral handle
+ *
+ * @return TLC5947_OK in case of success, TLC5947_ERROR_MEMORY otherwise
+ */
+TLC5947_STATUS TLC5947_init(TLC5947_Handle_t *handle, uint16_t num_devices, GPIO_TypeDef *xlat_port, uint16_t xlat_pin, 
+							GPIO_TypeDef *blank_port, uint16_t blank_pin, SPI_HandleTypeDef *hspi);
 
+/**
+ * @brief Allocates the space needed for the TLC5947 driver gs_buffer
+ *
+ * @param handle - handle for TLC5947 driver
+ *
+ * @return TLC5947_OK in case of success, TLC5947_ERROR_MEMORY otherwise
+ */
 TLC5947_STATUS TLC5947_create_GS_buffer(TLC5947_Handle_t *handle);
 
+/**
+ * @brief Frees the space allocated for the TLC5947 driver gs_buffer
+ *
+ * @param handle - handle for TLC5947 driver
+ *
+ * @return NONE
+ */
 void TLC5947_remove_GS_buffer(TLC5947_Handle_t *handle);
 
+/**
+ * @brief Sets the grayscale value (0 - 4095) for a specific channel
+ *
+ * @param handle - handle for TLC5947 driver
+ * @param chan - channel number in the chain of TLC5947 devices (0 < chan < 24 * (# of devices) - 1)
+ * @param gs_val - grayscale value to be assigned
+ *
+ * @return TLC5947_OK in case of success, TLC5947_ERROR_INVALID_ARG otherwise
+ */
 TLC5947_STATUS TLC5947_update_GS_buffer(TLC5947_Handle_t *handle, uint16_t chan, uint16_t gs_val);
 
+/**
+ * @brief Gets the grayscale value (0 - 4095) for a specific channel
+ *
+ * @param handle - handle for TLC5947 driver
+ * @param chan - channel number in the chain of TLC5947 devices (0 < chan < 24 * (# of devices) - 1)
+ * @param gs_val - grayscale value to be assigned
+ *
+ * @return the current grayscale value for the correct channel, return UINT16_MAX if invalid channel
+ */
 uint16_t TLC5947_get_GS_value(TLC5947_Handle_t *handle, uint16_t chan);
 
+/**
+ * @brief Writes the current grayscale values to the connected TLC5947 devices through SPI
+ *
+ * @param handle - handle for TLC5947 driver
+ *
+ * @return TLC5947_OK in case of success, TLC5947_ERROR_SPI otherwise
+ */
 TLC5947_STATUS TLC5947_send_GS_data(TLC5947_Handle_t *handle);
 
+/**
+ * @brief Enables the TLC5947 output pins
+ *
+ * @param handle - handle for TLC5947 driver
+ *
+ * @return NONE
+ */
 void TLC5947_enable_outputs(TLC5947_Handle_t *handle);
 
+
+/**
+ * @brief Disablea the TLC5947 output pins
+ *
+ * @param handle - handle for TLC5947 driver
+ *
+ * @return NONE
+ */
 void TLC5947_disable_outputs(TLC5947_Handle_t *handle);
 
 #endif /* __TLC5947_H_ */
